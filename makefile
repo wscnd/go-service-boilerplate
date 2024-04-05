@@ -49,5 +49,15 @@ dev-down:
 dev-status:
 	kubectl get nodes -o wide
 	kubectl get svc -o wide
-	kubectl get pods -o wide --watch --all-namespaces
+	watch -n 0.3 kubectl get pods -o wide --all-namespaces
 
+dev-apply:
+	cat zarf/k8s/base/service-pod/base-service.yaml | kubectl apply -f -
+
+dev-logs:
+	watch -n 0.3 kubectl logs -l app=service --all-containers -f --tail=100 --namespace=$(K8S_NAMESPACE)
+
+dev-restart:
+	kubectl rollout restart deployment service-pod --namespace=$(K8S_NAMESPACE)
+
+dev-update: all dev-load dev-restart
