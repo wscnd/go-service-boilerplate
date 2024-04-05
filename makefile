@@ -43,22 +43,26 @@ serviceapi:
 # K8S/KIND
 # ============================================
 
+Dev-update: all dev-load dev-restart
 dev-up:
 	kind create cluster \
 		--image $(K8S_KIND_VERSION) \
 		--name $(K8S_KIND_CLUSTER_NAME) \
 		--config zarf/k8s/kind/kind-config.yaml
 
-dev-load:
-	kind load docker-image ghcr.io/wscnd/service:$(APP_VERSION) --name $(K8S_KIND_CLUSTER_NAME)
-
 dev-down:
 	kind delete cluster --name $(K8S_KIND_CLUSTER_NAME)
+
+dev-watch:
+	watch -n 0.3 kubectl get pods -o wide
+
+dev-load:
+	kind load docker-image ghcr.io/wscnd/service:$(APP_VERSION) --name $(K8S_KIND_CLUSTER_NAME)
 
 dev-status:
 	kubectl get nodes -o wide
 	kubectl get svc -o wide
-	watch -n 0.3 kubectl get pods -o wide --all-namespaces
+	kubectl get pods -o wide --all-namespaces
 
 dev-apply:
 	cat zarf/k8s/base/service-pod/base-service.yaml | kubectl apply -f -
@@ -68,5 +72,3 @@ dev-logs:
 
 dev-restart:
 	kubectl rollout restart deployment service-pod --namespace=$(K8S_NAMESPACE)
-
-dev-update: all dev-load dev-restart
