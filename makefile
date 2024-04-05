@@ -65,7 +65,7 @@ dev-status:
 	kubectl get pods -o wide --all-namespaces
 
 dev-apply:
-	cat zarf/k8s/base/service-pod/base-service.yaml | kubectl apply -f -
+	kustomize build zarf/k8s/kind/service-pod | kubectl apply -f -
 
 dev-logs:
 	watch -n 0.3 kubectl logs -l app=service --all-containers -f --tail=100 --namespace=$(K8S_NAMESPACE)
