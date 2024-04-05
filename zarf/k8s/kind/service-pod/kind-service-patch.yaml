@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-pod
+  namespace: service-system
+
+spec:
+  selector:
+    matchLabels:
+      app: service
+
+  template:
+    metadata:
+      labels:
+        app: service
+
+    spec:
+      containers:
+        - name: service-api
+
+          resources:
+            requests:
+              cpu: "1000m" # starts with one
+              memory: "128Mi"
+            limits:
+              cpu: "2000m" # cap up to 2 full cores
+              memory: "256Mi"
+
+  replicas: 1
+  strategy:
+    type: Recreate
