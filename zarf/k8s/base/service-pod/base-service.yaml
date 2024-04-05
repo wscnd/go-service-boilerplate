@@ -9,14 +9,17 @@ kind: Deployment
 metadata:
   name: service-pod
   namespace: service-system
+
 spec:
   selector:
     matchLabels:
       app: service
+
   template:
     metadata:
       labels:
         app: service
+
     spec:
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
@@ -24,4 +27,19 @@ spec:
       containers:
         - name: service-api
           image: ghcr.io/wscnd/service:0.1
+
+          resources:
+            requests:
+              cpu: "1000m" # starts with one
+              memory: "64Mi"
+            limits:
+              cpu: "2000m" # cap up to 2 full cores
+              memory: "128Mi"
+
+          env:
+          - name: GOMAXPROCS
+            valueFrom:
+              resourceFieldRef:
+                resource: limits.cpu
 ---
+
