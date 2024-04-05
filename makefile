@@ -25,6 +25,10 @@ build:
 # MODULES
 # ============================================
 
+tidy:
+	go mod tidy
+	go mod vendor
+
 # ============================================
 # BUILD CONTAINERS
 # ============================================
@@ -43,7 +47,10 @@ serviceapi:
 # K8S/KIND
 # ============================================
 
+Start: all dev-up dev-load dev-apply
 Dev-update: all dev-load dev-restart
+Dev-update-apply: all dev-load dev-apply dev-restart
+
 dev-up:
 	kind create cluster \
 		--image $(K8S_KIND_VERSION) \
