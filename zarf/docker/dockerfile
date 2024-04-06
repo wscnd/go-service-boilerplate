@@ -4,19 +4,19 @@ FROM golang:alpine as build_sales-api
 ENV CGO_ENABLED 0
 ARG BUILD_REF
 
-WORKDIR /app
-# copy main file into container
-COPY main.go .
+COPY . /service
+WORKDIR /service/app/services/sales-api
 
 RUN	go build -ldflags "-X main.build=${BUILD_REF}" -o service main.go
 
 FROM alpine
 
-WORKDIR /app
-COPY --from=build_sales-api /app/service .
+WORKDIR /service/salesapiweb
+COPY --from=build_sales-api /service/app/services/sales-api/service .
 
 ARG BUILD_REF
 ARG BUILD_DATE
+
 CMD ["./service"]
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \
