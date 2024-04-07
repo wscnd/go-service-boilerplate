@@ -33,8 +33,6 @@ tidy:
 # BUILD CONTAINERS
 # ============================================
 
-all: serviceapi
-
 serviceapi:
 	docker build \
 		-f zarf/docker/dockerfile \
@@ -47,9 +45,9 @@ serviceapi:
 # K8S/KIND
 # ============================================
 
-Start: all dev-up dev-load dev-apply
-Dev-update: all dev-load dev-restart
-Dev-update-apply: all dev-load dev-apply dev-restart
+dev-init: serviceapi dev-up dev-load dev-apply
+dev-update: serviceapi dev-load dev-restart
+dev-update-apply: serviceapi dev-load dev-apply dev-restart
 
 dev-up:
 	kind create cluster \
