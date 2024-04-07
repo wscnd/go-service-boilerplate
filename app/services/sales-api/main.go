@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"runtime"
@@ -11,7 +10,7 @@ import (
 	"github.com/wscnd/go-service-boilerplate/foundation/logger"
 )
 
-var build = "develop"
+var build_ref = "develop"
 
 func main() {
 	var log *logger.Logger
@@ -33,14 +32,33 @@ func main() {
 	// _______________
 
 	ctx := context.Background()
-	log.Info(ctx, fmt.Sprintf("starting service build[%s] CPU[%v]", build, runtime.GOMAXPROCS(0)))
+	if err := run(ctx, log); err != nil {
+		log.Error(ctx, "startup", "msg", err)
+		os.Exit(1)
+	}
+}
 
-	defer log.Info(ctx, "service ended")
+func run(ctx context.Context, log *logger.Logger) error {
+	// _______________
+	// GOMAXPROCS
+	// make the service obey the docker runtime requests/limits
+	log.Info(ctx, "startup", "GOMAXPROCS", runtime.GOMAXPROCS(0))
 
+	// _______________
+	// APP STARTING
+	log.Info(ctx, "starting service", "version", build_ref)
+
+	// _______________
+	// CLEAN SHUTDOWN
+	// make the service obey the container runtime requests/limits
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 
-	<-shutdown
+	select {
+	case <-shutdown:
+		log.Info(ctx, "shutdown", "status", "shutdown started", "signal", shutdown)
+		defer log.Info(ctx, "shutdown", "status", "shutdown complete", "signal", shutdown)
+	}
 
-	log.Info(ctx, "stopping service")
+	return nil
 }
