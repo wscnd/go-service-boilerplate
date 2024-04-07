@@ -1,6 +1,7 @@
 FROM golang:alpine as build_sales-api
 
 # maybe not needed anymore?
+# not binding any c libraries
 ENV CGO_ENABLED 0
 ARG BUILD_REF
 
@@ -9,9 +10,12 @@ WORKDIR /service/app/services/sales-api
 
 RUN	go build -ldflags "-X main.build=${BUILD_REF}" -o service main.go
 
+###
 FROM alpine
-
 WORKDIR /service/salesapiweb
+
+RUN addgroup -g 1000 -S sales && \
+  adduser -u 1000 -h /service -G sales -S sales
 COPY --from=build_sales-api /service/app/services/sales-api/service .
 
 ARG BUILD_REF
@@ -20,7 +24,8 @@ ARG BUILD_DATE
 CMD ["./service"]
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \
-  org.opencontainers.image.title="service-api" \
+  org.opencontainers.image.title="sales-api" \
+  org.opencontainers.image.source="https://github.com/wscnd/go-service-boilerplate/app/services/sales-api" \
   org.opencontainers.image.revision="${BUILD_REF}" \
-  org.opencontainers.image.author="wscnd" \
+  org.opencontainers.image.author="wscnd <72019998+wscnd@users.noreply.github.com>" \
   org.opencontainers.image.vendor="wscnd"
