@@ -2,31 +2,31 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: service-system
+  name: sales-system
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-pod
-  namespace: service-system
+  name: sales
+  namespace: sales-system
 
 spec:
   selector:
     matchLabels:
-      app: service
+      app: sales
 
   template:
     metadata:
       labels:
-        app: service
+        app: sales
 
     spec:
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       terminationGracePeriodSeconds: 60
       containers:
-        - name: service-api
-          image: ghcr.io/wscnd/service:0.1
+        - name: sales-api
+          image: sales-image
 
           resources:
             requests:

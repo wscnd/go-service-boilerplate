@@ -5,11 +5,18 @@ SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 # DEPS
 # ==============================================================================
 
+BASE_IMAGE_NAME := localhost/wscnd/service
+SERVICE_NAME    := sales-api
 APP_VERSION := 0.1
-K8S_KIND_CLUSTER_NAME := service-start-cluster
+SERVICE_IMAGE_NAME := $(BASE_IMAGE_NAME)/$(SERVICE_NAME):$(APP_VERSION)
+
+
+# ------------------------------------------------------------------------------
+
+K8S_KIND_CLUSTER_NAME := service-boilerplate-cluster
 # https://github.com/kubernetes-sigs/kind/releases/
 K8S_KIND_VERSION := kindest/node:v1.29.2@sha256:51a1434a5397193442f0be2a297b488b6c919ce8a3931be0ce822606ea5ca245
-K8S_NAMESPACE := service-system
+K8S_NAMESPACE := sales-system
 
 # ==============================================================================
 # BASIC RUN & BUILD
@@ -37,7 +44,7 @@ tidy:
 serviceapi:
 	docker build \
 		-f zarf/docker/dockerfile \
-		-t ghcr.io/wscnd/service:$(APP_VERSION) \
+		-t $(SERVICE_IMAGE_NAME) \
 		--build-arg BUILD_REF=$(APP_VERSION) \
 		--build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
 		.
@@ -56,7 +63,7 @@ dev-up:
 	kind create cluster \
 		--image $(K8S_KIND_VERSION) \
 		--name $(K8S_KIND_CLUSTER_NAME) \
-		--config zarf/k8s/kind/kind-config.yaml
+		--config zarf/k8s/dev/kind-config.yaml
 
 dev-down:
 	kind delete cluster --name $(K8S_KIND_CLUSTER_NAME)
@@ -78,10 +85,10 @@ dev-logs:
 # ------------------------------------------------------------------------------
 
 dev-load:
-	kind load docker-image ghcr.io/wscnd/service:$(APP_VERSION) --name $(K8S_KIND_CLUSTER_NAME)
+	kind load docker-image $(SERVICE_IMAGE_NAME) --name $(K8S_KIND_CLUSTER_NAME)
 
 dev-apply:
-	kustomize build zarf/k8s/kind/service-pod | kubectl apply -f -
+	kustomize build zarf/k8s/base/sales | kubectl apply -f -
 
 dev-restart:
-	kubectl rollout restart deployment service-pod --namespace=$(K8S_NAMESPACE)
+	kubectl rollout restart deployment sales --namespace=$(K8S_NAMESPACE)

@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sales
+  namespace: sales-system
+
+spec:
+  selector:
+    matchLabels:
+      app: sales
+
+  template:
+    metadata:
+      labels:
+        app: sales
+
+    spec:
+      containers:
+        - name: sales-api
+
+          resources:
+            requests:
+              cpu: "500m" # starts with one
+              memory: "64Mi"
+            limits:
+              cpu: "1500m" # cap up to 2 full cores
+              memory: "128Mi"
+
+  replicas: 1
+  strategy:
+    type: Recreate
