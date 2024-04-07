@@ -13,6 +13,8 @@ import (
 var build_ref = "develop"
 
 func main() {
+	// ___________________________________________________________________________
+	// LOGGER INITIALIZATION
 	var log *logger.Logger
 
 	log = logger.NewWithEvents(
@@ -20,7 +22,7 @@ func main() {
 		logger.LevelInfo,
 		"SALES-API",
 		func(ctx context.Context) string {
-			return "id-123123-123123"
+			return "00000000-0000-0000-0000-000000000000"
 		},
 		logger.Events{
 			Error: func(ctx context.Context, r logger.Record) {
@@ -29,8 +31,8 @@ func main() {
 		},
 	)
 
-	// _______________
-
+	// ___________________________________________________________________________
+	// RUN PROJECT
 	ctx := context.Background()
 	if err := run(ctx, log); err != nil {
 		log.Error(ctx, "startup", "msg", err)
@@ -39,17 +41,17 @@ func main() {
 }
 
 func run(ctx context.Context, log *logger.Logger) error {
-	// _______________
+	// ___________________________________________________________________________
 	// GOMAXPROCS
 	// make the service obey the docker runtime requests/limits
 	log.Info(ctx, "startup", "GOMAXPROCS", runtime.GOMAXPROCS(0))
 
-	// _______________
+	// ___________________________________________________________________________
 	// APP STARTING
 	log.Info(ctx, "starting service", "version", build_ref)
 
-	// _______________
-	// CLEAN SHUTDOWN
+	// ___________________________________________________________________________
+// CLEAN SHUTDOWN
 	// make the service obey the container runtime requests/limits
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
