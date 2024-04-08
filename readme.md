@@ -32,3 +32,7 @@ Just very opinionated boilerplate, it has these layers:
 ├── makefile
 │   -> scripts
 ```
+
+## Goals
+
+What we are trying to accomplish is the disctinction made by the go language data semantics: packages based on what it does (interfaces) instead of what it is (concrete types).

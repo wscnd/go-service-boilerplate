@@ -23,11 +23,11 @@ spec:
 
           resources:
             requests:
-              cpu: "500m" # starts with one
-              memory: "64Mi"
+              cpu: "500m" # 50ms/100ms on one core
+              memory: "36Mi" # Needs to be benchmarked
             limits:
-              cpu: "1500m" # cap up to 2 full cores
-              memory: "128Mi"
+              cpu: "500m" # 50ms/100ms on one core
+              memory: "36Mi" # Needs to be benchmarked
 
   replicas: 1
   strategy:

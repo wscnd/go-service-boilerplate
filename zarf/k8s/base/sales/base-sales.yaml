@@ -30,11 +30,11 @@ spec:
 
           resources:
             requests:
-              cpu: "1000m" # starts with one
-              memory: "64Mi"
+              cpu: "250m" # 25ms/100ms on one core
+              memory: "36Mi" # Needs to be benchmarked
             limits:
-              cpu: "2000m" # cap up to 2 full cores
-              memory: "128Mi"
+              cpu: "250m" # 25ms/100ms on one core
+              memory: "36Mi" # Match the requests value
 
           env:
             - name: GOMAXPROCS
