@@ -6,7 +6,8 @@ SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 # ==============================================================================
 
 BASE_IMAGE_NAME := localhost/wscnd/service
-SERVICE_NAME    := sales-api
+APP := sales
+SERVICE_NAME := sales-api
 APP_VERSION := 0.1
 SERVICE_IMAGE_NAME := $(BASE_IMAGE_NAME)/$(SERVICE_NAME):$(APP_VERSION)
 
@@ -71,16 +72,14 @@ dev-down:
 dev-watch:
 	watch -n 0.3 kubectl get pods -o wide
 
-dev-status-all:
-	kubectl get nodes -o wide
-	kubectl get svc -o wide
-	kubectl get pods -o wide --watch --all-namespaces
-
 dev-status:
-	watch -n 2 kubectl get pods -o wide --all-namespaces
+	kubectl get svc,deploy,rs,nodes,pods --selector "app in ($(APP))" --all-namespaces
 
 dev-logs:
 	kubectl logs --namespace=$(K8S_NAMESPACE) -l app=$(APP) --all-containers=true -f --tail=100 --max-log-requests=6 | go run app/tooling/logfmt/main.go -service=$(SERVICE_NAME)
+
+dev-describe-sales:
+	kubectl describe pod --namespace=$(NAMESPACE) -l app=$(APP)
 
 # ------------------------------------------------------------------------------
 

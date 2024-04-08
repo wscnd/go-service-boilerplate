@@ -9,6 +9,8 @@ kind: Deployment
 metadata:
   name: sales
   namespace: sales-system
+  labels:
+    app: sales
 
 spec:
   selector:
@@ -21,8 +23,6 @@ spec:
         app: sales
 
     spec:
-      dnsPolicy: ClusterFirstWithHostNet
-      hostNetwork: true
       terminationGracePeriodSeconds: 60
       containers:
         - name: sales-api
@@ -37,9 +37,9 @@ spec:
               memory: "128Mi"
 
           env:
-          - name: GOMAXPROCS
-            valueFrom:
-              resourceFieldRef:
-                resource: limits.cpu
+            - name: GOMAXPROCS
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.cpu
 ---
 

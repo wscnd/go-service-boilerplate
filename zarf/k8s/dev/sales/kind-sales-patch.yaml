@@ -16,6 +16,8 @@ spec:
         app: sales
 
     spec:
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
       containers:
         - name: sales-api
 
