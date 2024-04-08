@@ -80,7 +80,7 @@ dev-status:
 	watch -n 2 kubectl get pods -o wide --all-namespaces
 
 dev-logs:
-	watch -n 0.3 kubectl logs -l app=service --all-containers -f --tail=100 --namespace=$(K8S_NAMESPACE)
+	kubectl logs --namespace=$(K8S_NAMESPACE) -l app=$(APP) --all-containers=true -f --tail=100 --max-log-requests=6 | go run app/tooling/logfmt/main.go -service=$(SERVICE_NAME)
 
 # ------------------------------------------------------------------------------
 
