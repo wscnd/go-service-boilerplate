@@ -11,8 +11,8 @@ import (
 	"runtime"
 	"syscall"
 	"time"
-	_ "net/http/pprof"
 
+	"github.com/wscnd/go-service-boilerplate/app/api/debug"
 	"github.com/wscnd/go-service-boilerplate/foundation/logger"
 
 	"github.com/ardanlabs/conf/v3"
@@ -98,7 +98,7 @@ func run(ctx context.Context, log *logger.Logger) error {
 	}
 	log.Info(ctx, "startup", "config", out)
 
-	// Add build ref to http://{ DebugHost }/debug/vars
+	// Add build ref to http://${{ DebugHost }}/debug/vars
 	expvar.NewString("build").Set(cfg.Version.Build)
 
 	// -------------------------------------------------------------------------
@@ -107,7 +107,7 @@ func run(ctx context.Context, log *logger.Logger) error {
 	go func() {
 		log.Info(ctx, "startup", "status", "debug v1 router started", "host", cfg.Web.DebugHost)
 
-		if err := http.ListenAndServe(cfg.Web.DebugHost, http.DefaultServeMux); err != nil {
+		if err := http.ListenAndServe(cfg.Web.DebugHost, debug.Mux()); err != nil {
 			log.Error(ctx, "shutdown", "status", "debug v1 router closed", "host", cfg.Web.DebugHost, "msg", err)
 		}
 	}()
