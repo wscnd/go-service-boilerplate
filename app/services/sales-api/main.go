@@ -135,14 +135,26 @@ func run(ctx context.Context, log *logger.Logger) error {
 		serverErrors <- api.ListenAndServe()
 	}()
 
+	// ___________________________________________________________________________
+	// SHUTDOWN
 	select {
-	case <-shutdown:
-		log.Info(ctx, "shutdown", "status", "shutdown started", "signal", shutdown)
-		defer log.Info(ctx, "shutdown", "status", "shutdown complete", "signal", shutdown)
 	case err := <-serverErrors:
 
 		return fmt.Errorf("server error: %w", err)
 
+	case sig := <-shutdown:
+		log.Info(ctx, "shutdown", "status", "shutdown started", "signal", sig)
+		defer log.Info(ctx, "shutdown", "status", "shutdown complete", "signal", sig)
+
+
+		// CLEAN SHUTDOWN
+		ctx, cancel := context.WithTimeout(ctx, cfg.Web.ShutdownTimeout)
+		defer cancel()
+
+		if err := api.Shutdown(ctx); err != nil {
+			api.Close()
+			return fmt.Errorf("could not stop server gracefully: %w", err)
+		}
 	}
 
 	return nil
