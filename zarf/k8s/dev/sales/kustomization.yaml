@@ -4,3 +4,4 @@ resources:
 - ../../base/sales
 patches:
 - path: kind-sales-patch.yaml
+- path: kind-sales-patch-service.yaml

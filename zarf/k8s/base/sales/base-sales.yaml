@@ -36,10 +36,33 @@ spec:
               cpu: "250m" # 25ms/100ms on one core
               memory: "36Mi" # Match the requests value
 
+          ports:
+            - name: sales-api
+              containerPort: 3000
+            - name: sales-api-debug
+              containerPort: 4000
+
           env:
             - name: GOMAXPROCS
               valueFrom:
                 resourceFieldRef:
                   resource: limits.cpu
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sales-api
+  namespace: sales-system
+spec:
+  selector:
+    app: sales
+
+  type: ClusterIP
+
+  ports:
+  - name: sales-api
+    port: 3000
+  - name: sales-api-debug
+    port: 4000
 ---
 
