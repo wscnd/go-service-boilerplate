@@ -3,12 +3,15 @@ package main
 import (
 	"context"
 	"errors"
+	"expvar"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
 	"time"
+	_ "net/http/pprof"
 
 	"github.com/wscnd/go-service-boilerplate/foundation/logger"
 
@@ -95,6 +98,19 @@ func run(ctx context.Context, log *logger.Logger) error {
 	}
 	log.Info(ctx, "startup", "config", out)
 
+	// Add build ref to http://{ DebugHost }/debug/vars
+	expvar.NewString("build").Set(cfg.Version.Build)
+
+	// -------------------------------------------------------------------------
+	// START DEBUG SERVICE
+
+	go func() {
+		log.Info(ctx, "startup", "status", "debug v1 router started", "host", cfg.Web.DebugHost)
+
+		if err := http.ListenAndServe(cfg.Web.DebugHost, http.DefaultServeMux); err != nil {
+			log.Error(ctx, "shutdown", "status", "debug v1 router closed", "host", cfg.Web.DebugHost, "msg", err)
+		}
+	}()
 
 	// ___________________________________________________________________________
 	// CLEAN SHUTDOWN
