@@ -58,7 +58,7 @@ serviceapi:
 # ==============================================================================
 
 dev-init: serviceapi dev-up dev-load dev-apply port-forward
-dev-update: serviceapi dev-load dev-restart port-forward
+dev-update: serviceapi dev-load dev-restart
 dev-update-apply: serviceapi dev-load dev-apply dev-restart
 
 # ------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ dev-status:
 	kubectl get svc,deploy,rs,nodes,pods --selector "app in ($(APP))" --all-namespaces
 
 dev-logs:
-	kubectl logs --namespace=$(K8S_NAMESPACE) -l app=$(APP) --all-containers=true -f --tail=100 --max-log-requests=6 | go run tools/logfmt/main.go -service=$(SERVICE_NAME)
+	kubectl logs --namespace=$(K8S_NAMESPACE) -l app=$(APP) --all-containers=true -f --tail=100 --max-log-requests=6 | go run apps/tools/logfmt/main.go -service=$(SERVICE_NAME)
 
 dev-describe-sales:
 	kubectl describe pod --namespace=$(NAMESPACE) -l app=$(APP)
