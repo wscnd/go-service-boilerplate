@@ -6,9 +6,12 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/wscnd/go-service-boilerplate/apps/server/sales/routes"
 	"github.com/wscnd/go-service-boilerplate/libs/logger"
 )
+
+type RouteAdder interface {
+	Add(mux *http.ServeMux, cfg Config)
+}
 
 // Config contains all the mandatory systems required by handlers.
 type Config struct {
@@ -18,9 +21,8 @@ type Config struct {
 }
 
 // WebAPI constructs a http.Handler with all application routes bound.
-func WebAPI(cfg Config) *http.ServeMux {
+func WebAPI(cfg Config, routeAdder RouteAdder) *http.ServeMux {
 	mux := http.NewServeMux()
-
-	mux.HandleFunc("GET /", routes.Home)
+	routeAdder.Add(mux, cfg)
 	return mux
 }

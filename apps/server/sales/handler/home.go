@@ -1,11 +1,11 @@
-package routes
+package handler
 
 import (
 	"encoding/json"
 	"net/http"
 )
 
-func Home(w http.ResponseWriter, r *http.Request) {
+func homeHandler(w http.ResponseWriter, r *http.Request) {
 	status := struct {
 		Status string
 	}{
