@@ -112,16 +112,37 @@ func run(ctx context.Context, log *logger.Logger) error {
 		}
 	}()
 
-	// ___________________________________________________________________________
-	// CLEAN SHUTDOWN
-	// make the service obey the container runtime requests/limits
+	// -------------------------------------------------------------------------
+	// START API SERVICE
+
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
+
+	api := http.Server{
+		Addr:         cfg.Web.APIHost,
+		Handler:      nil,
+		ReadTimeout:  cfg.Web.ReadTimeout,
+		WriteTimeout: cfg.Web.WriteTimeout,
+		IdleTimeout:  cfg.Web.IdleTimeout,
+		ErrorLog:     logger.NewStdLogger(log, logger.LevelError),
+	}
+
+	serverErrors := make(chan error, 1)
+
+	go func() {
+		log.Info(ctx, "startup", "status", "api router started", "host", api.Addr)
+
+		serverErrors <- api.ListenAndServe()
+	}()
 
 	select {
 	case <-shutdown:
 		log.Info(ctx, "shutdown", "status", "shutdown started", "signal", shutdown)
 		defer log.Info(ctx, "shutdown", "status", "shutdown complete", "signal", shutdown)
+	case err := <-serverErrors:
+
+		return fmt.Errorf("server error: %w", err)
+
 	}
 
 	return nil
