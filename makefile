@@ -84,8 +84,11 @@ dev-logs:
 dev-describe-sales:
 	kubectl describe pod --namespace=$(NAMESPACE) -l app=$(APP)
 
-dev-forward:
+port-forward:
 	kubectl port-forward service/sales-api 3000:3000 4000:4000 --namespace sales-system
+
+metrics-view:
+	expvarmon -ports="localhost:4000" -vars="build,requests,goroutines,errors,panics,mem:memstats.HeapAlloc,mem:memstats.HeapSys,mem:memstats.Sys"
 
 # ------------------------------------------------------------------------------
 
