@@ -58,7 +58,7 @@ serviceapi:
 # ==============================================================================
 
 dev-init: serviceapi dev-up dev-load dev-apply port-forward
-dev-update: serviceapi dev-load dev-restart
+dev-update: serviceapi dev-load dev-restart port-forward
 dev-update-apply: serviceapi dev-load dev-apply dev-restart
 
 # ------------------------------------------------------------------------------
@@ -86,6 +86,7 @@ dev-describe-sales:
 	kubectl describe pod --namespace=$(NAMESPACE) -l app=$(APP)
 
 port-forward:
+	kubectl wait pods --namespace=$(K8S_NAMESPACE) --selector app=$(APP) --timeout=120s --for=condition=Ready
 	kubectl port-forward service/$(SERVICE_NAME) 3000:3000 4000:4000 --namespace $(K8S_NAMESPACE)
 
 metrics-view:

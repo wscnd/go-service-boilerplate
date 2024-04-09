@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/wscnd/go-service-boilerplate/app/api/debug"
+	"github.com/wscnd/go-service-boilerplate/app/api/mux"
 	"github.com/wscnd/go-service-boilerplate/foundation/logger"
 
 	"github.com/ardanlabs/conf/v3"
@@ -118,9 +119,16 @@ func run(ctx context.Context, log *logger.Logger) error {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 
+	cfgMux := mux.Config{
+		Build: build,
+		Shutdown: shutdown,
+		Log: log,
+	}
+	mux := mux.WebAPI(cfgMux)
+
 	api := http.Server{
 		Addr:         cfg.Web.APIHost,
-		Handler:      nil,
+		Handler:      mux,
 		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
 		IdleTimeout:  cfg.Web.IdleTimeout,
@@ -128,7 +136,6 @@ func run(ctx context.Context, log *logger.Logger) error {
 	}
 
 	serverErrors := make(chan error, 1)
-
 	go func() {
 		log.Info(ctx, "startup", "status", "api router started", "host", api.Addr)
 
@@ -139,13 +146,11 @@ func run(ctx context.Context, log *logger.Logger) error {
 	// SHUTDOWN
 	select {
 	case err := <-serverErrors:
-
 		return fmt.Errorf("server error: %w", err)
 
 	case sig := <-shutdown:
 		log.Info(ctx, "shutdown", "status", "shutdown started", "signal", sig)
 		defer log.Info(ctx, "shutdown", "status", "shutdown complete", "signal", sig)
-
 
 		// CLEAN SHUTDOWN
 		ctx, cancel := context.WithTimeout(ctx, cfg.Web.ShutdownTimeout)
