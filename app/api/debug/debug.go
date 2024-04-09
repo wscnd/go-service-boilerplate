@@ -6,6 +6,8 @@ import (
 	"expvar"
 	"net/http"
 	"net/http/pprof"
+
+	"github.com/arl/statsviz"
 )
 
 // Mux registers all the debug routes from the standard library into a new mux
@@ -22,6 +24,8 @@ func Mux() *http.ServeMux {
 	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
 	mux.Handle("/debug/vars/", expvar.Handler())
 
+	// Add build ref to http://${{ DebugHost }}/debug/statsviz
+	statsviz.Register(mux)
 
 	return mux
 }
