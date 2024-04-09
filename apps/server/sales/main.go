@@ -14,6 +14,7 @@ import (
 
 	"github.com/wscnd/go-service-boilerplate/apis/debug"
 	"github.com/wscnd/go-service-boilerplate/apis/mux"
+	"github.com/wscnd/go-service-boilerplate/apps/server/sales/routes"
 	"github.com/wscnd/go-service-boilerplate/libs/logger"
 
 	"github.com/ardanlabs/conf/v3"
@@ -124,7 +125,8 @@ func run(ctx context.Context, log *logger.Logger) error {
 		Shutdown: shutdown,
 		Log: log,
 	}
-	mux := mux.WebAPI(cfgMux)
+
+	mux := mux.WebAPI(cfgMux, routes.Routes{})
 
 	api := http.Server{
 		Addr:         cfg.Web.APIHost,
