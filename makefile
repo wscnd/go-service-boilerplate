@@ -57,7 +57,7 @@ serviceapi:
 # K8S/KIND
 # ==============================================================================
 
-dev-init: serviceapi dev-up dev-load dev-apply
+dev-init: serviceapi dev-up dev-load dev-apply port-forward
 dev-update: serviceapi dev-load dev-restart
 dev-update-apply: serviceapi dev-load dev-apply dev-restart
 
@@ -68,6 +68,7 @@ dev-up:
 		--image $(K8S_KIND_VERSION) \
 		--name $(K8S_KIND_CLUSTER_NAME) \
 		--config zarf/k8s/dev/kind-config.yaml
+	kubectl wait --timeout=120s --namespace=local-path-storage --for=condition=Available deployment/local-path-provisioner
 
 dev-down:
 	kind delete cluster --name $(K8S_KIND_CLUSTER_NAME)
@@ -85,7 +86,7 @@ dev-describe-sales:
 	kubectl describe pod --namespace=$(NAMESPACE) -l app=$(APP)
 
 port-forward:
-	kubectl port-forward service/sales-api 3000:3000 4000:4000 --namespace sales-system
+	kubectl port-forward service/$(SERVICE_NAME) 3000:3000 4000:4000 --namespace $(K8S_NAMESPACE)
 
 metrics-view:
 	expvarmon -ports="localhost:4000" -vars="build,requests,goroutines,errors,panics,mem:memstats.HeapAlloc,mem:memstats.HeapSys,mem:memstats.Sys"
@@ -97,6 +98,7 @@ dev-load:
 
 dev-apply:
 	kustomize build zarf/k8s/base/sales | kubectl apply -f -
+	kubectl wait --timeout=120s --namespace=$(K8S_NAMESPACE) --for=condition=available deployment/$(APP)
 
 dev-restart:
-	kubectl rollout restart deployment sales --namespace=$(K8S_NAMESPACE)
+	kubectl rollout restart deployment $(APP) --namespace=$(K8S_NAMESPACE)

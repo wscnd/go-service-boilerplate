@@ -5,11 +5,6 @@ metadata:
   name: sales
   namespace: sales-system
 
-spec:
-  selector:
-    matchLabels:
-      app: sales
-
   template:
     metadata:
       labels:
