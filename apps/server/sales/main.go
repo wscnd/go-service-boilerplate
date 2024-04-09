@@ -12,9 +12,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/wscnd/go-service-boilerplate/app/api/debug"
-	"github.com/wscnd/go-service-boilerplate/app/api/mux"
-	"github.com/wscnd/go-service-boilerplate/foundation/logger"
+	"github.com/wscnd/go-service-boilerplate/apis/debug"
+	"github.com/wscnd/go-service-boilerplate/apis/mux"
+	"github.com/wscnd/go-service-boilerplate/libs/logger"
 
 	"github.com/ardanlabs/conf/v3"
 )

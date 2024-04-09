@@ -6,7 +6,7 @@ ENV CGO_ENABLED 0
 ARG BUILD_REF
 
 COPY . /service
-WORKDIR /service/app/services/sales-api
+WORKDIR /service/apps/server/sales
 
 RUN	go build -ldflags "-X main.build=${BUILD_REF}" -o service main.go
 
@@ -16,7 +16,7 @@ WORKDIR /service/salesapiweb
 
 RUN addgroup -g 1000 -S sales && \
   adduser -u 1000 -h /service -G sales -S sales
-COPY --from=build_sales-api /service/app/services/sales-api/service .
+COPY --from=build_sales-api /service/apps/server/sales/service .
 
 ARG BUILD_REF
 ARG BUILD_DATE

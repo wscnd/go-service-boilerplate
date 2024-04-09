@@ -3,11 +3,11 @@
 package mux
 
 import (
-	"encoding/json"
 	"net/http"
 	"os"
 
-	"github.com/wscnd/go-service-boilerplate/foundation/logger"
+	"github.com/wscnd/go-service-boilerplate/apps/server/sales/routes"
+	"github.com/wscnd/go-service-boilerplate/libs/logger"
 )
 
 // Config contains all the mandatory systems required by handlers.
@@ -21,16 +21,6 @@ type Config struct {
 func WebAPI(cfg Config) *http.ServeMux {
 	mux := http.NewServeMux()
 
-	h := func(w http.ResponseWriter, r *http.Request) {
-		status := struct {
-			Status string
-		}{
-			Status: "ok",
-		}
-    w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(&status)
-	}
-
-	mux.HandleFunc("GET /", h)
+	mux.HandleFunc("GET /", routes.Home)
 	return mux
 }

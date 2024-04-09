@@ -8,9 +8,9 @@ SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 BASE_IMAGE_NAME := localhost/wscnd/service
 APP := sales
 SERVICE_NAME := sales-api
+SALES_SERVICE_DIR := apps/server/sales
 APP_VERSION := 0.1
 SERVICE_IMAGE_NAME := $(BASE_IMAGE_NAME)/$(SERVICE_NAME):$(APP_VERSION)
-
 
 # ------------------------------------------------------------------------------
 
@@ -24,14 +24,14 @@ K8S_NAMESPACE := sales-system
 # ==============================================================================
 
 run:
-	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
+	go run $(SALES_SERVICE_DIR)/main.go | go run apps/tools/logfmt/main.go
 
 run-help:
-	go run app/services/sales-api/main.go --help | go run app/tooling/logfmt/main.go
+	go run $(SALES_SERVICE_DIR)/main.go --help | go run apps/tools/logfmt/main.go
 
 build:
 # main.build is a var that is located in the main file that can be configurable via flags
-	go build -ldflags "-X main.build=local" -o service app/services/sales-api/main.go
+	go build -ldflags "-X main.build=local" -o service $(SALES_SERVICE_DIR)/main.go
 
 # ==============================================================================
 # MODULES
@@ -80,7 +80,7 @@ dev-status:
 	kubectl get svc,deploy,rs,nodes,pods --selector "app in ($(APP))" --all-namespaces
 
 dev-logs:
-	kubectl logs --namespace=$(K8S_NAMESPACE) -l app=$(APP) --all-containers=true -f --tail=100 --max-log-requests=6 | go run app/tooling/logfmt/main.go -service=$(SERVICE_NAME)
+	kubectl logs --namespace=$(K8S_NAMESPACE) -l app=$(APP) --all-containers=true -f --tail=100 --max-log-requests=6 | go run tools/logfmt/main.go -service=$(SERVICE_NAME)
 
 dev-describe-sales:
 	kubectl describe pod --namespace=$(NAMESPACE) -l app=$(APP)
