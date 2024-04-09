@@ -24,11 +24,14 @@ K8S_NAMESPACE := sales-system
 # ==============================================================================
 
 run:
-	go run main.go
+	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
+
+run-help:
+	go run app/services/sales-api/main.go --help | go run app/tooling/logfmt/main.go
 
 build:
 # main.build is a var that is located in the main file that can be configurable via flags
-	go build -ldflags "-X main.build=local" -o service main.go
+	go build -ldflags "-X main.build=local" -o service app/services/sales-api/main.go
 
 # ==============================================================================
 # MODULES
