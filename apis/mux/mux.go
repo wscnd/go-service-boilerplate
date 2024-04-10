@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/wscnd/go-service-boilerplate/apis/middleware"
 	"github.com/wscnd/go-service-boilerplate/libs/logger"
 	"github.com/wscnd/go-service-boilerplate/libs/web"
 )
@@ -23,7 +24,7 @@ type Config struct {
 
 // WebAPI constructs a http.Handler with all application routes bound.
 func WebAPI(cfg Config, routeAdder RouteAdder) http.Handler {
-	app := web.NewApp(cfg.Shutdown)
+	app := web.NewApp(cfg.Shutdown, middleware.Logger)
 
 	routeAdder.Add(app, cfg)
 
