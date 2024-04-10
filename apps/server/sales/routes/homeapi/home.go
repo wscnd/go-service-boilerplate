@@ -1,4 +1,4 @@
-package handler
+package homeapi
 
 import (
 	"encoding/json"
