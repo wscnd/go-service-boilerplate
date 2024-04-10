@@ -1,11 +1,12 @@
 package homeapi
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 )
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
+func homeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	status := struct {
 		Status string
 	}{
@@ -13,4 +14,6 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(&status)
+	return nil
 }
+
