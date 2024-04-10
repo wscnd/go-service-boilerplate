@@ -14,7 +14,7 @@ import (
 
 	"github.com/wscnd/go-service-boilerplate/apis/debug"
 	"github.com/wscnd/go-service-boilerplate/apis/mux"
-	"github.com/wscnd/go-service-boilerplate/apps/server/sales/routes"
+	routes "github.com/wscnd/go-service-boilerplate/apps/server/sales/routes/build"
 	"github.com/wscnd/go-service-boilerplate/libs/logger"
 
 	"github.com/ardanlabs/conf/v3"
@@ -121,9 +121,9 @@ func run(ctx context.Context, log *logger.Logger) error {
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 
 	cfgMux := mux.Config{
-		Build: build,
+		Build:    build,
 		Shutdown: shutdown,
-		Log: log,
+		Log:      log,
 	}
 
 	mux := mux.WebAPI(cfgMux, routes.Routes{})
