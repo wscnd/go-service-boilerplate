@@ -25,7 +25,9 @@ func NewApp(shutdown chan os.Signal, mws ...MiddlewareHandler) *App {
 }
 
 func (app *App) Handle(pattern string, handler Handler, routemws ...MiddlewareHandler) {
+	// Route specific middlewares
 	handler = wrapMiddlewares(routemws, handler)
+	// Whole app middlewares
 	handler = wrapMiddlewares(app.mws, handler)
 
 	h := func(w http.ResponseWriter, r *http.Request) {

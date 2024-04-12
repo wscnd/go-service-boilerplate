@@ -12,12 +12,14 @@ Just very opinionated boilerplate, it has these layers:
 │
 ├── business
 │   -> code that its related to solve the business logic/problelm & that can be reusable.
+│   -> has the ability to find the policy of usage, not very opinionated.
 │   ├── core: core business problem
 │   ├── data: data management, order, paging, db, transaction...
 │   └── web: reusable stuff related to webapis.
 │
-├── foundation
+├── foundation/libs
 │   -> is like the stdlib of this project.
+│   -> highly opinionated.
 │   -> can't have interdependency between them.
 │   -> ideally can be deployed as a standalone pkg.
 │

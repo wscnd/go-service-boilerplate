@@ -10,7 +10,8 @@ type shutdownError struct {
 	Message string
 }
 
-// NewShutdownError is a factory function that returns an error that causes the framework to signal
+// NewShutdownError is a factory function that returns an error that causes
+// the framework to signal
 // a graceful shutdown.
 func NewShutdownError(message string) error {
 	return &shutdownError{message}

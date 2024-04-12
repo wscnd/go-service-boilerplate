@@ -77,7 +77,7 @@ dev-watch:
 	watch -n 0.3 kubectl get pods -o wide
 
 dev-status:
-	kubectl get svc,deploy,rs,nodes,pods --selector "app in ($(APP))" --all-namespaces
+	kubectl get svc,deploy,rs,nodes --selector "app in ($(APP))" --all-namespaces
 
 dev-logs:
 	kubectl logs --namespace=$(K8S_NAMESPACE) -l app=$(APP) --all-containers=true -f --tail=100 --max-log-requests=6 | go run apps/tools/logfmt/main.go -service=$(SERVICE_NAME)
