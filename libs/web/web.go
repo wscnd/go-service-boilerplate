@@ -32,8 +32,16 @@ func (app *App) Handle(pattern string, handler Handler, routemws ...MiddlewareHa
 
 	h := func(w http.ResponseWriter, r *http.Request) {
 		if err := handler(r.Context(), w, r); err != nil {
-			app.shutdown <- syscall.SIGTERM
+			// TODO: handle errors
+			app.SignalShutdown()
 		}
 	}
 	app.ServeMux.HandleFunc(pattern, h)
+}
+
+// SignalShutdown is used to gracefully shutdown the app when integrity issue
+// is identified. It means that the error went through the error handler and
+// is propagating.
+func (app *App) SignalShutdown() {
+	app.shutdown <- syscall.SIGTERM
 }
