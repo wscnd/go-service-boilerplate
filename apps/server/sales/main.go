@@ -35,8 +35,9 @@ func main() {
 			return "00000000-0000-0000-0000-000000000000"
 		},
 		logger.Events{
+			// Some third party error that we can use.
 			Error: func(ctx context.Context, r logger.Record) {
-				log.Info(ctx, "*** alert ***")
+				log.Info(ctx, "*** alert ***", r)
 			},
 		},
 	)

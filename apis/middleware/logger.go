@@ -29,7 +29,9 @@ func Logger(log *logger.Logger) web.MiddlewareHandler {
 
 			return err
 		}
+
 		return h
 	}
+
 	return m
 }

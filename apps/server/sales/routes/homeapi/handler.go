@@ -6,4 +6,5 @@ import (
 
 func Routes(app *web.App) {
 	app.Handle("GET /", homeHandler)
+	app.Handle("GET /error", handlerWithError)
 }
