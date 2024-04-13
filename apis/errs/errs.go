@@ -12,8 +12,8 @@ type Error struct {
 }
 
 // New constructs an error based on an app error.
-func New(err error, status int) error {
-	return &Error{err, status}
+func New(err error, status int) Error {
+	return Error{err, status}
 }
 
 // Error implements the error interface.
