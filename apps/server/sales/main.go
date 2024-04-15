@@ -16,6 +16,7 @@ import (
 	"github.com/wscnd/go-service-boilerplate/apis/mux"
 	routes "github.com/wscnd/go-service-boilerplate/apps/server/sales/routes/build"
 	"github.com/wscnd/go-service-boilerplate/libs/logger"
+	"github.com/wscnd/go-service-boilerplate/libs/web"
 
 	"github.com/ardanlabs/conf/v3"
 )
@@ -32,7 +33,7 @@ func main() {
 		logger.LevelInfo,
 		"SALES-API",
 		func(ctx context.Context) string {
-			return "00000000-0000-0000-0000-000000000000"
+			return web.GetTraceID(ctx)
 		},
 		logger.Events{
 			// Some third party error that we can use.
