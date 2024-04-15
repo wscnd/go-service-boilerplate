@@ -28,6 +28,7 @@ func WebAPI(cfg Config, routeAdder RouteAdder) http.Handler {
 		cfg.Shutdown,
 		middleware.Logger(cfg.Log),
 		middleware.Errors(cfg.Log),
+		middleware.Metrics(),
 		middleware.Panics(),
 	)
 

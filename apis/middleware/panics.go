@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"runtime/debug"
 
+	"github.com/wscnd/go-service-boilerplate/apis/metrics"
 	"github.com/wscnd/go-service-boilerplate/libs/web"
 )
 
@@ -21,6 +22,8 @@ func Panics() web.MiddlewareHandler {
 				if rec := recover(); rec != nil {
 					trace := debug.Stack()
 					err = fmt.Errorf("PANIC [%v] TRACE[%s]", rec, string(trace))
+
+					metrics.AddPanics(ctx)
 				}
 			}()
 
