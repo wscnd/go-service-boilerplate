@@ -33,6 +33,9 @@ build:
 # main.build is a var that is located in the main file that can be configurable via flags
 	go build -ldflags "-X main.build=local" -o service $(SALES_SERVICE_DIR)/main.go
 
+stress:
+	hey -m GET -c 100 -n 100_000 \
+	"http://localhost:3000/"
 # ==============================================================================
 # MODULES
 # ==============================================================================
