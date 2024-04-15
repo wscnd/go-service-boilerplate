@@ -26,3 +26,7 @@ func handlerWithError(ctx context.Context, w http.ResponseWriter, r *http.Reques
 	}
 	return fmt.Errorf("some error")
 }
+
+func handlerWithPanic(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	panic("I panicked ooo")
+}

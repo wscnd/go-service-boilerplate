@@ -61,7 +61,6 @@ func run(ctx context.Context, log *logger.Logger) error {
 	// CONFIGURATION
 	// the conf package uses the following ordering: (1) default, (2) environment variables, (3) cmd line flag override
 	// https://pkg.go.dev/github.com/ardanlabs/conf/v3
-
 	cfg := struct {
 		conf.Version
 		Web struct {
@@ -106,7 +105,6 @@ func run(ctx context.Context, log *logger.Logger) error {
 
 	// -------------------------------------------------------------------------
 	// START DEBUG SERVICE
-
 	go func() {
 		log.Info(ctx, "startup", "status", "debug v1 router started", "host", cfg.Web.DebugHost)
 
@@ -117,7 +115,6 @@ func run(ctx context.Context, log *logger.Logger) error {
 
 	// -------------------------------------------------------------------------
 	// START API SERVICE
-
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 
@@ -141,7 +138,6 @@ func run(ctx context.Context, log *logger.Logger) error {
 	serverErrors := make(chan error, 1)
 	go func() {
 		log.Info(ctx, "startup", "status", "api router started", "host", api.Addr)
-
 		serverErrors <- api.ListenAndServe()
 	}()
 

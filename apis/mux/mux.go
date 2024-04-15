@@ -24,7 +24,12 @@ type Config struct {
 
 // WebAPI constructs a http.Handler with all application routes bound.
 func WebAPI(cfg Config, routeAdder RouteAdder) http.Handler {
-	app := web.NewApp(cfg.Shutdown, middleware.Logger(cfg.Log), middleware.Errors(cfg.Log))
+	app := web.NewApp(
+		cfg.Shutdown,
+		middleware.Logger(cfg.Log),
+		middleware.Errors(cfg.Log),
+		middleware.Panics(),
+	)
 
 	routeAdder.Add(app, cfg)
 
