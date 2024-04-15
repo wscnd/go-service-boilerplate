@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"os"
 	"syscall"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type Handler func(ctx context.Context, w http.ResponseWriter, r *http.Request) error
@@ -32,7 +35,13 @@ func (app *App) Handle(pattern string, handler Handler, routemws ...MiddlewareHa
 	handler = wrapMiddlewares(app.mws, handler)
 
 	h := func(w http.ResponseWriter, r *http.Request) {
-		if err := handler(r.Context(), w, r); err != nil {
+		v := Values{
+			TraceID: uuid.NewString(),
+			Now:     time.Now().UTC(),
+		}
+		ctx := SetValues(r.Context(), &v)
+
+		if err := handler(ctx, w, r); err != nil {
 			if validateError(err) {
 				app.SignalShutdown()
 				return
@@ -52,7 +61,6 @@ func (app *App) SignalShutdown() {
 // validateError validates the error for special conditions that do not
 // warrant an actual shutdown by the system.
 func validateError(err error) bool {
-
 	// Ignore syscall.EPIPE and syscall.ECONNRESET errors which occurs
 	// when a write operation happens on the http.ResponseWriter that
 	// has simultaneously been disconnected by the client (TCP
