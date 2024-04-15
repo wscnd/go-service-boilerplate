@@ -33,7 +33,7 @@ func Errors(log *logger.Logger) web.MiddlewareHandler {
 				er = errs.GetError(err)
 				status = er.Status
 
-      // Some other error that we don't know what to do (yet).
+			// Some other error that we don't know what to do (yet).
 			default:
 				er = errs.Error{
 					Err:    errors.New("unknown"),
