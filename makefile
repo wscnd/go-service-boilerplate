@@ -62,6 +62,7 @@ serviceapi:
 
 dev-init: serviceapi dev-up dev-load dev-apply port-forward
 dev-update: serviceapi dev-load dev-restart
+dev-update-pf: dev-update port-forward
 dev-update-apply: serviceapi dev-load dev-apply dev-restart
 
 # ------------------------------------------------------------------------------
