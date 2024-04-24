@@ -35,7 +35,7 @@ func (app *App) Handle(pattern string, handler Handler, routemws ...MiddlewareHa
 	handler = wrapMiddlewares(app.mws, handler)
 
 	h := func(w http.ResponseWriter, r *http.Request) {
-		v := Values{
+		v := CtxValues{
 			TraceID: uuid.NewString(),
 			Now:     time.Now().UTC(),
 		}
