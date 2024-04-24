@@ -31,13 +31,13 @@ func Errors(log *logger.Logger) web.MiddlewareHandler {
 			// Trusted error, we know what was sent.
 			case errs.IsError(err):
 				er = errs.GetError(err)
-				status = er.Status
+				status = er.Code
 
 			// Some other error that we don't know what to do (yet).
 			default:
 				er = errs.Error{
-					Err:    errors.New("unknown"),
-					Status: http.StatusInternalServerError,
+					Message: errors.New("unknown").Error(),
+					Code:  http.StatusInternalServerError,
 				}
 				status = http.StatusInternalServerError
 			}

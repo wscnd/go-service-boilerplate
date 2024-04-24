@@ -7,18 +7,18 @@ import (
 
 // Error represents an error in the system.
 type Error struct {
-	Err    error
-	Status int
+	Message string `json:"err"`
+	Code    int    `json:"code"`
 }
 
 // New constructs an error based on an app error.
 func New(err error, status int) Error {
-	return Error{err, status}
+	return Error{err.Error(), status}
 }
 
 // Error implements the error interface.
 func (err Error) Error() string {
-	return err.Err.Error()
+	return err.Message
 }
 
 // IsError tests the concrete error is of the Error type.

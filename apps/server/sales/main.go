@@ -38,7 +38,7 @@ func main() {
 		logger.Events{
 			// Some third party error that we can use.
 			Error: func(ctx context.Context, r logger.Record) {
-				log.Info(ctx, "*** alert ***", r)
+				log.Info(ctx, "*** alert something here for panics ***")
 			},
 		},
 	)
