@@ -37,7 +37,7 @@ func Errors(log *logger.Logger) web.MiddlewareHandler {
 			default:
 				er = errs.Error{
 					Message: errors.New("unknown").Error(),
-					Code:  http.StatusInternalServerError,
+					Code:    http.StatusInternalServerError,
 				}
 				status = http.StatusInternalServerError
 			}

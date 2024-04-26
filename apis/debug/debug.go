@@ -1,4 +1,3 @@
-
 // Package debug provides handler support for the debugging endpoints.
 package debug
 

@@ -17,7 +17,7 @@ func Panics() web.MiddlewareHandler {
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) (err error) {
 			// Defer a function to recover from a panic and set the err return
 			// variable after the fact.
-      // Needs to use named return since defer statements are kind of in a limbo space.
+			// Needs to use named return since defer statements are kind of in a limbo space.
 			defer func() {
 				if rec := recover(); rec != nil {
 					trace := debug.Stack()
