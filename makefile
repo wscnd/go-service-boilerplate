@@ -46,6 +46,9 @@ stress:
 # 	$ openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
 # 	$ openssl rsa -pubout -in private.pem -out public.pem
 
+admin:
+	go run apps/tools/admin/main.go
+
 # ==============================================================================
 # MODULES
 # ==============================================================================
