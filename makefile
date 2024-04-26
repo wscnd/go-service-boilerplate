@@ -107,3 +107,11 @@ dev-apply:
 
 dev-restart:
 	kubectl rollout restart deployment $(APP) --namespace=$(K8S_NAMESPACE)
+
+# ==============================================================================
+# NOTES
+# ==============================================================================
+#
+# RSA Keys
+# 	To generate a private/public key PEM file.
+# 	$ openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
