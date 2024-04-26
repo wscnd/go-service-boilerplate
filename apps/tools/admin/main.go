@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	err := commands.GenKey()
+	err := commands.GenToken()
 	if err != nil {
 		log.Fatalln(err)
 	}
