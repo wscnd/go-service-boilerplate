@@ -31,10 +31,8 @@ func GenToken() error {
 	// nbf (not before time): Time before which the JWT must not be accepted for processing
 	// iat (issued at time): Time at which the JWT was issued; can be used to determine age of the JWT
 	// jti (JWT ID): Unique identifier; can be used to prevent the JWT from being replayed (allows a token to be used only once)
-	tokenClaims := struct {
-		jwt.RegisteredClaims
-		Roles []string
-	}{
+
+	tokenClaims := auth.TokenClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   "1234567890",
 			Issuer:    "service project",
@@ -59,10 +57,7 @@ func GenToken() error {
 
 	// Validating the jwt token
 	parser := jwt.NewParser(jwt.WithValidMethods([]string{jwt.SigningMethodRS256.Name}))
-	var tokenClaims2 struct {
-		jwt.RegisteredClaims
-		Roles []string
-	}
+	var tokenClaims2 auth.TokenClaims
 	keyFunc := func(t *jwt.Token) (interface{}, error) {
 		return &privateKey.PublicKey, nil
 	}
@@ -80,11 +75,7 @@ func GenToken() error {
 	fmt.Printf("%#v\n", tokenClaims2)
 	fmt.Println("************")
 
-	var tokenClaims3 struct {
-		jwt.RegisteredClaims
-		Roles []string
-	}
-
+	var tokenClaims3 auth.TokenClaims
 	_, _, err = parser.ParseUnverified(tokenStr, &tokenClaims3)
 	if err != nil {
 		return fmt.Errorf("parsing token claims3: %w", err)
