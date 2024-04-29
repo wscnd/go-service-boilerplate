@@ -9,11 +9,7 @@ import (
 	"github.com/wscnd/go-service-boilerplate/libs/logger"
 )
 
-func GenToken() error {
-	privateKey, err := GenKey()
-	if err != nil {
-		return fmt.Errorf("generating key: %w", err)
-	}
+func GenToken(log *logger.Logger) error {
 	// Generating a token requires defining a set of tokenClaims. In this applications
 	// case, we only care about defining the subject and the user in question and
 	// the roles they have on the database. This token will expire in a year.
