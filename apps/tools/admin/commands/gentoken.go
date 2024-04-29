@@ -40,13 +40,37 @@ func GenToken() error {
 	token := jwt.NewWithClaims(method, claims)
 	token.Header["kid"] = "60877A3C-9AB6-4A50-9F27-B56D78229D92"
 
-	str, err := token.SignedString(privateKey)
+	tokenStr, err := token.SignedString(privateKey)
 	if err != nil {
 		return fmt.Errorf("signing token: %w", err)
 	}
 
 	fmt.Println("************")
-	fmt.Println(str)
+	fmt.Println(tokenStr)
 	fmt.Println("************")
+
+	// Validating the jwt token
+	parser := jwt.NewParser(jwt.WithValidMethods([]string{jwt.SigningMethodRS256.Name}))
+	var tokenClaims struct {
+		jwt.RegisteredClaims
+		Roles []string
+	}
+	keyFunc := func(t *jwt.Token) (interface{}, error) {
+		return &privateKey.PublicKey, nil
+	}
+
+	tkn, err := parser.ParseWithClaims(tokenStr, &tokenClaims, keyFunc)
+	if err != nil {
+		return fmt.Errorf("parsing token: %w", err)
+	}
+
+	if !tkn.Valid {
+		return fmt.Errorf("signature invalid: %w", err)
+	}
+
+	fmt.Println("************")
+	fmt.Printf("%#v\n", tokenClaims)
+	fmt.Println("************")
+
 	return nil
 }
