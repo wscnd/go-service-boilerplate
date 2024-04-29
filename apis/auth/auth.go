@@ -53,3 +53,32 @@ func New(cfg Config) (*Auth, error) {
 	return &a, nil
 }
 
+
+func (a *Auth) opaPolicyEvaluation(ctx context.Context, opaPolicy string, rule string, input any) error {
+	query := fmt.Sprintf("x = data.%s.%s", OpaPackage, rule)
+
+	q, err := rego.New(
+		rego.Query(query),
+		rego.Module("policy.rego", opaPolicy),
+	).PrepareForEval(ctx)
+	if err != nil {
+		return err
+	}
+
+	results, err := q.Eval(ctx, rego.EvalInput(input))
+	if err != nil {
+		return fmt.Errorf("query: %w", err)
+	}
+
+	if len(results) == 0 {
+		return errors.New("no results")
+	}
+	fmt.Printf("%#v\n", results)
+
+	result, ok := results[0].Bindings["x"].(bool)
+	if !ok || !result {
+		return fmt.Errorf("bindings results[%v] ok[%v]", results, ok)
+	}
+
+	return nil
+}

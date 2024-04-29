@@ -1,18 +1,12 @@
 package commands
 
 import (
-	"bytes"
-	"context"
-	"crypto/x509"
-	"encoding/pem"
-	"errors"
 	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/wscnd/go-service-boilerplate/apis/auth"
-
-	"github.com/open-policy-agent/opa/rego"
+	"github.com/wscnd/go-service-boilerplate/libs/logger"
 )
 
 func GenToken() error {
@@ -31,7 +25,6 @@ func GenToken() error {
 	// nbf (not before time): Time before which the JWT must not be accepted for processing
 	// iat (issued at time): Time at which the JWT was issued; can be used to determine age of the JWT
 	// jti (JWT ID): Unique identifier; can be used to prevent the JWT from being replayed (allows a token to be used only once)
-
 	tokenClaims := auth.TokenClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   "1234567890",
@@ -75,72 +68,7 @@ func GenToken() error {
 	fmt.Printf("%#v\n", tokenClaims2)
 	fmt.Println("************")
 
-	var tokenClaims3 auth.TokenClaims
-	_, _, err = parser.ParseUnverified(tokenStr, &tokenClaims3)
-	if err != nil {
-		return fmt.Errorf("parsing token claims3: %w", err)
-	}
-
-	// Marshal the public key from the private key to PKIX.
-	asn1Bytes, err := x509.MarshalPKIXPublicKey(&privateKey.PublicKey)
-	if err != nil {
-		return fmt.Errorf("marshaling public key: %w", err)
-	}
-
-	// Construct a PEM block for the public key.
-	publicBlock := pem.Block{
-		Type:  "PUBLIC KEY",
-		Bytes: asn1Bytes,
-	}
-
-	var pemFile bytes.Buffer
-	// Write the public key to the public key file.
-	if err := pem.Encode(&pemFile, &publicBlock); err != nil {
-		return fmt.Errorf("encoding to public file: %w", err)
-	}
-
-	opaInput := map[string]any{
-		"Key":   pemFile.String(),
-		"Token": tokenStr,
-	}
-
-	err = opaPolicyEvaluation(context.Background(), auth.OpaAuthentication, auth.RuleAuthenticate, opaInput)
-	if err != nil {
-		return fmt.Errorf("authentication failed: %w", err)
-	}
-
-	fmt.Println("************")
-	fmt.Println("SIGNATURE VALIDATED WITH REGO")
-	fmt.Println("************")
-
-	return nil
-}
-
-func opaPolicyEvaluation(ctx context.Context, opaPolicy string, rule string, input any) error {
-	query := fmt.Sprintf("x = data.%s.%s", auth.OpaPackage, rule)
-
-	q, err := rego.New(
-		rego.Query(query),
-		rego.Module("policy.rego", opaPolicy),
-	).PrepareForEval(ctx)
-	if err != nil {
-		return err
-	}
-
-	results, err := q.Eval(ctx, rego.EvalInput(input))
-	if err != nil {
-		return fmt.Errorf("query: %w", err)
-	}
-
-	if len(results) == 0 {
-		return errors.New("no results")
-	}
-	fmt.Printf("%#v\n", results)
-
-	result, ok := results[0].Bindings["x"].(bool)
-	if !ok || !result {
-		return fmt.Errorf("bindings results[%v] ok[%v]", results, ok)
-	}
+	// TODO: validate with opa
 
 	return nil
 }
