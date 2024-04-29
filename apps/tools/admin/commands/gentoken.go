@@ -1,11 +1,14 @@
 package commands
 
 import (
+	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/wscnd/go-service-boilerplate/apis/auth"
+	"github.com/wscnd/go-service-boilerplate/libs/keystore"
 	"github.com/wscnd/go-service-boilerplate/libs/logger"
 )
 
@@ -31,40 +34,34 @@ func GenToken(log *logger.Logger) error {
 		Roles: []string{"ADMIN"},
 	}
 
-	method := jwt.GetSigningMethod(jwt.SigningMethodRS256.Name)
-	token := jwt.NewWithClaims(method, tokenClaims)
-	token.Header["kid"] = "60877A3C-9AB6-4A50-9F27-B56D78229D92"
-
-	tokenStr, err := token.SignedString(privateKey)
+	ks := keystore.New()
+	if err := ks.LoadRSAKeys(os.DirFS("zarf/keys/")); err != nil {
+		return fmt.Errorf("reading keys: %w", err)
+	}
+	authCfg := auth.Config{
+		Log:       log,
+		KeyLookup: ks,
+	}
+	a, err := auth.New(authCfg)
 	if err != nil {
-		return fmt.Errorf("signing token: %w", err)
+		return fmt.Errorf("constructing auth: %w", err)
 	}
 
-	fmt.Println("************")
-	fmt.Println(tokenStr)
-	fmt.Println("************")
-
-	// Validating the jwt token
-	parser := jwt.NewParser(jwt.WithValidMethods([]string{jwt.SigningMethodRS256.Name}))
-	var tokenClaims2 auth.TokenClaims
-	keyFunc := func(t *jwt.Token) (interface{}, error) {
-		return &privateKey.PublicKey, nil
-	}
-
-	tkn, err := parser.ParseWithClaims(tokenStr, &tokenClaims2, keyFunc)
+	tokenStr, err := a.GenerateToken("60877A3C-9AB6-4A50-9F27-B56D78229D92", tokenClaims)
 	if err != nil {
-		return fmt.Errorf("parsing token claims2: %w", err)
+		return err
 	}
 
-	if !tkn.Valid {
-		return fmt.Errorf("signature invalid: %w", err)
+	fmt.Printf("-----BEGIN TOKEN-----\n%s\n-----END TOKEN-----\n", tokenStr)
+
+	claims, err := a.Authenticate(context.Background(), fmt.Sprintf("Bearer %s", tokenStr))
+	if err != nil {
+		return fmt.Errorf("parsing token claims: %w", err)
 	}
 
 	fmt.Println("************")
-	fmt.Printf("%#v\n", tokenClaims2)
+	fmt.Printf("%#v\n", claims)
 	fmt.Println("************")
-
-	// TODO: validate with opa
 
 	return nil
 }
