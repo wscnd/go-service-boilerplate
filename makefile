@@ -120,3 +120,11 @@ dev-apply:
 
 dev-restart:
 	kubectl rollout restart deployment $(APP) --namespace=$(K8S_NAMESPACE)
+
+# ==============================================================================
+# TESTING FEATURES
+# ==============================================================================
+# Use make admin before
+# export TOKEN="$TOKEN_GENERATED"
+curl-auth:
+	curl -il -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/authn
