@@ -25,6 +25,9 @@ What we are trying to accomplish is the disctinction made by the go language dat
 │   -> is like the stdlib of this project.
 │   -> a restriction is that we can't have interdependency between them bc ideally they
 │       can be deployed as a standalone pkg.
+│   ├── keystore: interface for key store. currently in memory one.
+│   ├── logger: our custom logger with multiple log levels.
+│   └── web: our custom web http functions.
 │
 ├── vendor
 │   -> module for direct dependency, third party code.
@@ -44,7 +47,7 @@ What we are trying to accomplish is the disctinction made by the go language dat
 ## Features
 
 1. Custom metrics server with Statsviz (apis/debug & apis/metrics).
-2. AuthoriZation, AutheNtication and Token Generation with Open Policy Agent/Rego & JWT (apis/auth)
+2. AuthoriZation, AutheNtication and Token Generation with Open Policy Agent/Rego & JWT (apis/auth).
 3. Clean startup/shutdown.
 4. Flexible way of configuring the launch of application, facilitating the development/testing/debugging.
 5. Clear (or the attempt to) separation of concerns, leveraging packages to communicate intent.
