@@ -17,7 +17,7 @@ WORKDIR /service/salesapiweb
 RUN addgroup -g 1000 -S sales && \
   adduser -u 1000 -h /service -G sales -S sales
 # can probably embed the keys to the binary and use in memory instead of file
-COPY --from=build_sales-api /service/zarf/keys/. /service/zarf/keys/.
+COPY --from=build_sales-api /service/zarf/keys/. /service/salesapiweb/zarf/keys/.
 COPY --from=build_sales-api /service/apps/server/sales/service .
 
 ARG BUILD_REF
