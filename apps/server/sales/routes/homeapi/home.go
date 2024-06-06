@@ -30,3 +30,12 @@ func handlerWithError(ctx context.Context, w http.ResponseWriter, r *http.Reques
 func handlerWithPanic(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	panic("I panicked ooo")
 }
+
+func handlerWithAuth(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+	status := struct {
+		Status string
+	}{
+		Status: "ok you're authenticated and authorized",
+	}
+	return web.RespondJSON(ctx, w, status, http.StatusOK)
+}
