@@ -9,5 +9,5 @@ import (
 type Routes struct{}
 
 func (Routes) Add(app *web.App, cfg mux.Config) {
-	homeapi.Routes(app)
+	homeapi.Routes(app, cfg)
 }

@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/wscnd/go-service-boilerplate/apis/auth"
 	"github.com/wscnd/go-service-boilerplate/apis/debug"
 	"github.com/wscnd/go-service-boilerplate/apis/mux"
 	routes "github.com/wscnd/go-service-boilerplate/apps/server/sales/routes/build"
@@ -73,6 +74,11 @@ func run(ctx context.Context, log *logger.Logger) error {
 			DebugHost          string        `conf:"default:0.0.0.0:4000"`
 			CORSAllowedOrigins []string      `conf:"default:*"`
 		}
+		Auth struct {
+			KeysFolder string `conf:"default:zarf/keys/"`
+			ActiveKeyID  string `conf:"default:60877A3C-9AB6-4A50-9F27-B56D78229D92"`
+			Issuer     string `conf:"default:service project"`
+		}
 	}{
 		Version: conf.Version{
 			Build: build,
@@ -121,6 +127,7 @@ func run(ctx context.Context, log *logger.Logger) error {
 
 	cfgMux := mux.Config{
 		Build:    build,
+		Auth:     auth,
 		Shutdown: shutdown,
 		Log:      log,
 	}

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/wscnd/go-service-boilerplate/apis/auth"
 	"github.com/wscnd/go-service-boilerplate/apis/middleware"
 	"github.com/wscnd/go-service-boilerplate/libs/logger"
 	"github.com/wscnd/go-service-boilerplate/libs/web"
@@ -17,6 +18,7 @@ type RouteAdder interface {
 
 // Config contains all the mandatory systems required by handlers.
 type Config struct {
+	Auth     *auth.Auth
 	Build    string
 	Shutdown chan os.Signal
 	Log      *logger.Logger
