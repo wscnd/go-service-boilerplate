@@ -26,12 +26,12 @@ func GenToken(log *logger.Logger) error {
 	// jti (JWT ID): Unique identifier; can be used to prevent the JWT from being replayed (allows a token to be used only once)
 	tokenClaims := auth.TokenClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   "1234567890",
+			Subject:   "5cf37266-3473-4006-984f-9325122678b7",
 			Issuer:    "service project",
 			ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(8760 * time.Hour)), /* a year */
 			IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
 		},
-		Roles: []string{"ADMIN"},
+		Roles: []string{"user"},
 	}
 
 	ks := keystore.New()
