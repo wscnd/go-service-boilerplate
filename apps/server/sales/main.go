@@ -16,6 +16,7 @@ import (
 	"github.com/wscnd/go-service-boilerplate/apis/debug"
 	"github.com/wscnd/go-service-boilerplate/apis/mux"
 	routes "github.com/wscnd/go-service-boilerplate/apps/server/sales/routes/build"
+	"github.com/wscnd/go-service-boilerplate/libs/keystore"
 	"github.com/wscnd/go-service-boilerplate/libs/logger"
 	"github.com/wscnd/go-service-boilerplate/libs/web"
 
@@ -109,6 +110,25 @@ func run(ctx context.Context, log *logger.Logger) error {
 
 	// Add build ref to http://${{ DebugHost }}/debug/vars
 	expvar.NewString("build").Set(cfg.Version.Build)
+
+	// -------------------------------------------------------------------------
+	// INITIALIZE AUTHN SUPPORT
+	log.Info(ctx, "startup", "status", "initializing authentication support")
+
+	ks := keystore.New()
+	if err := ks.LoadRSAKeys(os.DirFS(cfg.Auth.KeysFolder)); err != nil {
+		return fmt.Errorf("reading keys: %w", err)
+	}
+
+	authCfg := auth.Config{
+		Log:       log,
+		KeyLookup: ks,
+	}
+
+	auth, err := auth.New(authCfg)
+	if err != nil {
+		return fmt.Errorf("constructing auth: %w", err)
+	}
 
 	// -------------------------------------------------------------------------
 	// START DEBUG SERVICE
