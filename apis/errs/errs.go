@@ -3,6 +3,7 @@ package errs
 
 import (
 	"errors"
+	"fmt"
 )
 
 // Error represents an error in the system.
@@ -14,6 +15,13 @@ type Error struct {
 // New constructs an error based on an app error.
 func New(err error, status int) Error {
 	return Error{err.Error(), status}
+}
+
+func Newf(err error, status int, v ...any) Error {
+	return Error{
+		Message: fmt.Sprintf(err.Error(), v...),
+		Code:    status,
+	}
 }
 
 // Error implements the error interface.
